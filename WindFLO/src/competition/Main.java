@@ -39,7 +39,7 @@ public class Main {
 		}
 		KusiakLayoutEvaluator wfle = new KusiakLayoutEvaluator();
 		wfle.initialize(ws);
-		GA algorithm = new GA(wfle);
+		GA1 algorithm = new GA1(wfle);
 		algorithm.run();
 	}
 }
