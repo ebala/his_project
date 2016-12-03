@@ -30,6 +30,7 @@ public class Main {
 	}
 
 	public void useLocalEvaluation() {
+		Out.createFile();
 		WindScenario ws = null;
 		try {
 			ws = new WindScenario(WindScenario.getScenarioFilename(1, true));
