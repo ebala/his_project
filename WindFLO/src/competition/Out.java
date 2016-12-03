@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 
 public class Out {
 
-	private static String filePath = "../../../out/output.txt";
+	private static String filePath = "/var/www/html/output.txt";
 
 	public static void createFile() {
 		File file = new File(filePath);
