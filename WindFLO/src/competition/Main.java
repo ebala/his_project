@@ -24,7 +24,10 @@ public class Main {
 		}
 		else{
 			eval.initialize(SCENARIO_NUMBER, USER_API_TOKEN, RUN_API_TOKEN);
-		}
+		}		Out.writeOut(1, 2, 5);
+		Out.writeOut(1, 2, 5);
+		Out.writeOut(1, 2, 5);
+		Out.writeOut(1, 2, 5);
 		GA algorithm = new GA(eval);
 		algorithm.run();
 	}
