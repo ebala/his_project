@@ -25,7 +25,7 @@ public class GA {
 		cross_rate = 0.40;
 	}
 
-	private void evaluate() {
+	private void evaluate(int iteration) {
 		double minfit = Double.MAX_VALUE;
 		int tCount = 0;
 		for (int p = 0; p < num_pop; p++) {
@@ -61,6 +61,7 @@ public class GA {
 				minfit = fits[p];
 			}
 		}
+		Out.writeOut(iteration, tCount, minfit);
 		System.out.println(tCount + " <-- Minimal fitness in population: " + minfit);
 	}
 
@@ -104,7 +105,7 @@ public class GA {
 		}
 
 		// evaluate initial populations (uses num_pop evals)
-		evaluate();
+		evaluate(0);
 
 		// GA
 		for (int i = 0; i < (2000 / num_pop); i++) {
@@ -179,7 +180,7 @@ public class GA {
 			pops = children;
 
 			// evaluate
-			evaluate();
+			evaluate(i);
 		}
 	}
 }
