@@ -90,9 +90,16 @@ public class GA {
 		pops = new boolean[num_pop][grid.size()];
 		fits = new double[num_pop];
 
+		//mTournaments Selection
 		for (int p = 0; p < num_pop; p++) {
 			for (int i = 0; i < grid.size(); i++) {
-				pops[p][i] = rand.nextBoolean();
+//				System.out.println("X - Axis --> " + grid.get(i)[0]);
+//				System.out.println("Y - Axis --> " + grid.get(i)[1]);
+				if(grid.get(i)[0] == 0 || grid.get(i)[1] ==0){
+					pops[p][i] = true;
+				}else{
+					pops[p][i] = rand.nextBoolean();
+				}
 			}
 		}
 

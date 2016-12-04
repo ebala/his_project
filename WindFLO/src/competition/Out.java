@@ -10,11 +10,16 @@ public class Out {
 
 	private static String filePath = "/var/www/html/output.txt";
 
+	private static boolean writeOutput = true;
+	
 	public static void createFile() {
 		File file = new File(filePath);
 
 		if (file.exists()) {
 			file.delete();
+		}else{
+			writeOutput = false;
+			return;
 		}
 		try {
 			 file.createNewFile();
@@ -31,6 +36,10 @@ public class Out {
 	}
 
 	public static void writeOut(int it, int tCount, double fv) {
+		if(!writeOutput){
+			return;
+		}
+		
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(filePath),true));
 			PrintWriter out = new PrintWriter(bw);

@@ -31,7 +31,9 @@ public class CompetitionEvaluator extends WindFarmLayoutEvaluator {
 	protected double wakeFreeRatio;
 	protected double energyCost;
 
-	protected String hostname = "http://127.0.0.1:5000";
+//	protected String hostname = "http://127.0.0.1:5000";
+	
+	protected String hostname = "http://windflo.mueller-bady.com:8081/";
 
 	/**
 	 * Initializes the evaluator with a scenario and a user token. This method

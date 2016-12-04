@@ -6,15 +6,15 @@ import evaluation.CompetitionEvaluator;
 public class Main {
 
 	// Change the following lines to fit your needs for the competition
-	private final String USER_API_TOKEN = "XXX"; // Place your User API Token here!
-	private final String RUN_API_TOKEN = "XXX"; // Place your Run API Token here!
+	private final String USER_API_TOKEN = "3GWPBVOLDWJX8X157GRF7OYQWQCVV4"; // Place your User API Token here!
+	private final String RUN_API_TOKEN = "KZN66QJ04NZSUTA13WSQW7Q3Q7WIO8"; // Place your Run API Token here!
 	private final int SCENARIO_NUMBER = 2;
 	
 	public static void main(String argv[]) {
 		Main m = new Main();
 		m.useLocalEvaluation();
 		// WARNING: Uncomment the following statement to use the server evaluation.
-		// m.useCompetitionServerEvaluation();
+//		 m.useCompetitionServerEvaluation();
 	}
 
 	public void useCompetitionServerEvaluation() {
@@ -24,10 +24,7 @@ public class Main {
 		}
 		else{
 			eval.initialize(SCENARIO_NUMBER, USER_API_TOKEN, RUN_API_TOKEN);
-		}		Out.writeOut(1, 2, 5);
-		Out.writeOut(1, 2, 5);
-		Out.writeOut(1, 2, 5);
-		Out.writeOut(1, 2, 5);
+		}		
 		GA algorithm = new GA(eval);
 		algorithm.run();
 	}
@@ -43,7 +40,7 @@ public class Main {
 		}
 		KusiakLayoutEvaluator wfle = new KusiakLayoutEvaluator();
 		wfle.initialize(ws);
-		GA1 algorithm = new GA1(wfle);
+		GA algorithm = new GA(wfle);
 		algorithm.run();
 	}
 }
