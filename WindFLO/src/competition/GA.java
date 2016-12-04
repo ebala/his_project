@@ -1,6 +1,7 @@
 package competition;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -16,11 +17,13 @@ public class GA {
 	private double mut_rate;
 	private double cross_rate;
 	private List<double[]> grid = new ArrayList<double[]>();
+	
+	SelectionMethods sms;
 
 	public GA(WindFarmLayoutEvaluator evaluator) {
 		wfle = evaluator;
 		num_pop = 20;
-		tour_size = 4;
+		tour_size = 2;
 		mut_rate = 0.05;
 		cross_rate = 0.40;
 	}
@@ -38,6 +41,8 @@ public class GA {
 			}
 			tCount = nturbines;
 
+			// we get nturbines count from previous loop
+			// formulate new layout where turbines are true
 			double[][] layout = new double[nturbines][2];
 			int l_i = 0;
 			for (int i = 0; i < grid.size(); i++) {
@@ -92,15 +97,16 @@ public class GA {
 		fits = new double[num_pop];
 
 		//mTournaments Selection
+		// Bala : true for all farms around edges x=0 & y=0
 		for (int p = 0; p < num_pop; p++) {
 			for (int i = 0; i < grid.size(); i++) {
 //				System.out.println("X - Axis --> " + grid.get(i)[0]);
 //				System.out.println("Y - Axis --> " + grid.get(i)[1]);
-				if(grid.get(i)[0] == 0 || grid.get(i)[1] ==0){
+				/*if((grid.get(i)[0] == 0 || grid.get(i)[1] ==0) && rand.nextFloat() > 0.25 ){
 					pops[p][i] = true;
-				}else{
+				}else{*/
 					pops[p][i] = rand.nextBoolean();
-				}
+				//}
 			}
 		}
 
@@ -110,6 +116,7 @@ public class GA {
 		// GA
 		for (int i = 0; i < (2000 / num_pop); i++) {
 
+			
 			// rank populations (tournament)
 			int[] winners = new int[num_pop / tour_size];
 			int[] competitors = new int[num_pop];
@@ -117,6 +124,7 @@ public class GA {
 				competitors[c] = c;
 			}
 
+			// Shuffle competitors
 			for (int c = 0; c < competitors.length; c++) {
 				int index = rand.nextInt(c + 1);
 				int temp = competitors[index];
@@ -136,28 +144,66 @@ public class GA {
 				}
 				winners[t] = winner;
 			}
-
+			
+			
+			System.out.println(Arrays.toString(winners));
+			
 			// crossover
 			boolean[][] children = new boolean[num_pop][grid.size()];
 
 			for (int c = 0; c < (num_pop - winners.length); c++) {
 				int s1 = rand.nextInt(winners.length);
 				int s2 = rand.nextInt(winners.length - 1);
+				int s3 = rand.nextInt(winners.length - 2);
 				if (s2 >= s1) {
 					s2++;
 				}
+				if(s3 >= s2){
+					s3++;
+				}
+				
 				int p1 = winners[s1];
 				int p2 = winners[s2];
+				int p3 = winners[s3];
 				boolean[] parent1 = pops[p1];
 				boolean[] parent2 = pops[p2];
+				boolean[] parent3 = pops[p3];
 
 				boolean[] child = new boolean[grid.size()];
 				for (int j = 0; j < child.length; j++) {
-					if (rand.nextDouble() < cross_rate) {
+
+					//Three Parents
+					if(parent1[j] == parent2[j] == parent3[j]){
+						child[j] = parent1[j];
+					}else if(parent1[j] == parent2[j] || parent1[j] == parent3[j]){
+						child[j] = parent1[j];
+					}else if(parent2[j] == parent3[j]){
+						child[j] =parent2[j];
+					}else{
+						child[j] = rand.nextBoolean();
+					}
+					
+					
+					// modification start
+//					if (parent2[j] && parent1[j]) {
+//						child[j] = true;
+//					} else { // modification end
+				
+					
+					/*if (rand.nextDouble() < cross_rate) {
 						child[j] = parent2[j];
 					} else {
 						child[j] = parent1[j];
-					}
+					}*/
+					
+					// uniform 
+/*					if (rand.nextBoolean()) {
+						child[j] = parent2[j];
+					} else {
+						child[j] = parent1[j];
+					}*/
+					
+//					}
 				}
 
 				children[c] = child;
