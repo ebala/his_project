@@ -17,29 +17,33 @@ public class GA {
 	private double mut_rate;
 	private double cross_rate;
 	private List<double[]> grid = new ArrayList<double[]>();
-	
+
 	SelectionMethods sms;
+	CrossOvers co;
 
 	public GA(WindFarmLayoutEvaluator evaluator) {
 		wfle = evaluator;
 		num_pop = 20;
-		tour_size = 2;
+		tour_size = 4;
 		mut_rate = 0.05;
 		cross_rate = 0.40;
+		sms = new SelectionMethods();
+		co = new CrossOvers();
 	}
 
 	private void evaluate(int iteration) {
 		double minfit = Double.MAX_VALUE;
 		int tCount = 0;
+		int[] turbines = new int[num_pop];
+		
 		for (int p = 0; p < num_pop; p++) {
 			int nturbines = 0;
-			tCount = 0;
 			for (int i = 0; i < grid.size(); i++) {
 				if (pops[p][i]) {
 					nturbines++;
 				}
 			}
-			tCount = nturbines;
+			turbines[p] = nturbines;
 
 			// we get nturbines count from previous loop
 			// formulate new layout where turbines are true
@@ -64,6 +68,7 @@ public class GA {
 			fits[p] = coe;
 			if (fits[p] < minfit) {
 				minfit = fits[p];
+				tCount = turbines[p];
 			}
 		}
 		Out.writeOut(iteration, tCount, minfit);
@@ -96,17 +101,17 @@ public class GA {
 		pops = new boolean[num_pop][grid.size()];
 		fits = new double[num_pop];
 
-		//mTournaments Selection
+		// mTournaments Selection
 		// Bala : true for all farms around edges x=0 & y=0
 		for (int p = 0; p < num_pop; p++) {
 			for (int i = 0; i < grid.size(); i++) {
-//				System.out.println("X - Axis --> " + grid.get(i)[0]);
-//				System.out.println("Y - Axis --> " + grid.get(i)[1]);
-				/*if((grid.get(i)[0] == 0 || grid.get(i)[1] ==0) && rand.nextFloat() > 0.25 ){
-					pops[p][i] = true;
-				}else{*/
+				// System.out.println("X - Axis --> " + grid.get(i)[0]);
+				// System.out.println("Y - Axis --> " + grid.get(i)[1]);
+//				if ((grid.get(i)[0] == 0.0 || grid.get(i)[1] == 0.0) && rand.nextFloat() > 0.25) {
+//					pops[p][i] = true;
+//				} else {
 					pops[p][i] = rand.nextBoolean();
-				//}
+//				}
 			}
 		}
 
@@ -116,7 +121,6 @@ public class GA {
 		// GA
 		for (int i = 0; i < (2000 / num_pop); i++) {
 
-			
 			// rank populations (tournament)
 			int[] winners = new int[num_pop / tour_size];
 			int[] competitors = new int[num_pop];
@@ -144,84 +148,92 @@ public class GA {
 				}
 				winners[t] = winner;
 			}
-			
-			
-			System.out.println(Arrays.toString(winners));
-			
+
+			// int[] winners = sms.StochasticSampling(fits, 10);
+
+			// System.out.println(Arrays.toString(winners));
+
+			boolean[][] children = co.threeParentCrossOver(num_pop, grid, winners, pops);
 			// crossover
-			boolean[][] children = new boolean[num_pop][grid.size()];
+			/*
+			 * boolean[][] children = new boolean[num_pop][grid.size()];
+			 * 
+			 * for (int c = 0; c < (num_pop - winners.length); c++) { int s1 =
+			 * getRandomWithExclusion(rand, 0, winners.length-1); int s2 =
+			 * getRandomWithExclusion(rand, 0, winners.length-1, s1); int s3 =
+			 * getRandomWithExclusion(rand, 0, winners.length-1, s1,s2);
+			 */
+			// if (s2 >= s1) {
+			// s2++;
+			// }
+			// if(s3 >= s2){
+			// s3++;
+			// }
 
-			for (int c = 0; c < (num_pop - winners.length); c++) {
-				int s1 = rand.nextInt(winners.length);
-				int s2 = rand.nextInt(winners.length - 1);
-				int s3 = rand.nextInt(winners.length - 2);
-				if (s2 >= s1) {
-					s2++;
-				}
-				if(s3 >= s2){
-					s3++;
-				}
-				
-				int p1 = winners[s1];
-				int p2 = winners[s2];
-				int p3 = winners[s3];
-				boolean[] parent1 = pops[p1];
-				boolean[] parent2 = pops[p2];
-				boolean[] parent3 = pops[p3];
+			/*
+			 * int p1 = winners[s1]; int p2 = winners[s2]; int p3 = winners[s3];
+			 * boolean[] parent1 = pops[p1]; boolean[] parent2 = pops[p2];
+			 * boolean[] parent3 = pops[p3];
+			 * 
+			 * boolean[] child = new boolean[grid.size()]; for (int j = 0; j <
+			 * child.length; j++) {
+			 * 
+			 * //Three Parents /*if(parent1[j] == parent2[j] == parent3[j]){
+			 * child[j] = parent1[j]; }else if(parent1[j] == parent2[j] ||
+			 * parent1[j] == parent3[j]){ child[j] = parent1[j]; }else
+			 * if(parent2[j] == parent3[j]){ child[j] =parent2[j]; }else{
+			 * child[j] = rand.nextBoolean(); }
+			 */
 
-				boolean[] child = new boolean[grid.size()];
-				for (int j = 0; j < child.length; j++) {
+			// modification start
+			// if (parent2[j] && parent1[j]) {
+			// child[j] = true;
+			// } else { // modification end
 
-					//Three Parents
-					if(parent1[j] == parent2[j] == parent3[j]){
-						child[j] = parent1[j];
-					}else if(parent1[j] == parent2[j] || parent1[j] == parent3[j]){
-						child[j] = parent1[j];
-					}else if(parent2[j] == parent3[j]){
-						child[j] =parent2[j];
-					}else{
-						child[j] = rand.nextBoolean();
-					}
-					
-					
-					// modification start
-//					if (parent2[j] && parent1[j]) {
-//						child[j] = true;
-//					} else { // modification end
-				
-					
-					/*if (rand.nextDouble() < cross_rate) {
-						child[j] = parent2[j];
-					} else {
-						child[j] = parent1[j];
-					}*/
-					
-					// uniform 
-/*					if (rand.nextBoolean()) {
-						child[j] = parent2[j];
-					} else {
-						child[j] = parent1[j];
-					}*/
-					
-//					}
-				}
+			/*
+			 * if (rand.nextDouble() < cross_rate) { child[j] = parent2[j]; }
+			 * else { child[j] = parent1[j]; }
+			 */
 
-				children[c] = child;
-			}
+			// uniform
+			/*
+			 * if (rand.nextBoolean()) { child[j] = parent2[j]; } else {
+			 * child[j] = parent1[j]; }
+			 * 
+			 * // } }
+			 * 
+			 * children[c] = child; }
+			 */
 
 			// mutate
-			for (int c = 0; c < (num_pop - winners.length); c++) {
+			int m =0;
+			for (int c = 0; c < (num_pop ); c++) {
+				/*int mCount = (int) (mut_rate * children[c].length);
+				
+				int[] mutPoints = new int[mCount];
+				
+				for (int j = 0; j < mutPoints.length; j++) {
+					int r = getRandomWithExclusion(rand, 0, children[c].length-1, Arrays.copyOf(mutPoints, j));
+					mutPoints[j]=r;
+					children[c][r] = !children[c][r];
+					m++;
+				}
+				
+				System.out.println(c + " : Mutation --> " + m);*/
 				for (int j = 0; j < children[c].length; j++) {
 					if (rand.nextDouble() < mut_rate) {
 						children[c][j] = !children[c][j];
+						m++;
 					}
 				}
 			}
+			
+//			System.out.println("Mutation --> " + m);
 
 			// elitism
-			for (int c = 0; c < winners.length; c++) {
+		/*	for (int c = 0; c < winners.length; c++) {
 				children[num_pop - winners.length + c] = pops[winners[c]];
-			}
+			}*/
 
 			pops = children;
 
@@ -229,4 +241,16 @@ public class GA {
 			evaluate(i);
 		}
 	}
+
+	public int getRandomWithExclusion(Random rnd, int start, int end, int... exclude) {
+		int random = start + rnd.nextInt(end - start + 1 - exclude.length);
+		for (int ex : exclude) {
+			if (random < ex) {
+				break;
+			}
+			random++;
+		}
+		return random;
+	}
+
 }

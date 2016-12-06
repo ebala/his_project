@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 
 public class Out {
 
@@ -16,7 +17,8 @@ public class Out {
 		File file = new File(filePath);
 
 		if (file.exists()) {
-			file.delete();
+			Date d = new Date();
+			file.renameTo(new File("output_" + d.toString() + ".txt"));
 		}else{
 			writeOutput = false;
 			return;
@@ -25,6 +27,9 @@ public class Out {
 			 file.createNewFile();
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file,true));
 			PrintWriter out = new PrintWriter(bw);
+			out.println("No Edges | No elitism | All 20 children from 3 parent crossover | ");
+			out.println("======================================================================");
+			out.println("");
 			out.println("|Iteration    |Turbine Count     |Fitness Value");
 			out.close();
 			bw.close();
