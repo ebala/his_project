@@ -2,6 +2,7 @@ package competition;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -65,13 +66,21 @@ public class GA {
 			} else {
 				coe = Double.MAX_VALUE;
 			}
+			
+			if(p==0){
+				minfit = coe;
+			}
+//			System.out.println(turbines[p] + " <= coe => " + minfit);
+//			Out.writeOut(iteration/10, tCount, minfit);
+			
 			fits[p] = coe;
 			if (fits[p] < minfit) {
 				minfit = fits[p];
 				tCount = turbines[p];
 			}
+			Out.writeOut(p, "| TCOUNT : " +turbines[p] + " | FIT => " + minfit + "  |", false);
 		}
-		Out.writeOut(iteration, tCount, minfit);
+		Out.writeOut(iteration, " Turbines =>  "+tCount + " |  Minimal fitness in population => " + minfit , true);
 		System.out.println(tCount + " <-- Minimal fitness in population: " + minfit);
 	}
 
@@ -104,15 +113,36 @@ public class GA {
 		// mTournaments Selection
 		// Bala : true for all farms around edges x=0 & y=0
 		for (int p = 0; p < num_pop; p++) {
+			int tNrs = 0;
+//			int[] turbines = new int[grid.size()];
 			for (int i = 0; i < grid.size(); i++) {
 				// System.out.println("X - Axis --> " + grid.get(i)[0]);
 				// System.out.println("Y - Axis --> " + grid.get(i)[1]);
-//				if ((grid.get(i)[0] == 0.0 || grid.get(i)[1] == 0.0) && rand.nextFloat() > 0.25) {
-//					pops[p][i] = true;
-//				} else {
+				/*double v =((double) (p+1)/num_pop) * rand.nextDouble();
+//				System.out.println("     v   ===>  " +v);
+				if(v > 0.5){
+					pops[p][i] = true;
+					tNrs++;
+				}else{
+					pops[p][i] = rand.nextBoolean();
+					if(pops[p][i])
+						tNrs++;
+				}*/
+				//int pos = getRandomWithExclusion(rand, 0, grid.size()-1, Arrays.copyOf(turbines, i));
+//				int pos = rand.nextInt(grid.size());
+//				turbines[i]= pos;
+//				
+//				if(rand.nextFloat() > 0.25){
+//					pops[p][pos] = true;
+//					tNrs++;
+//				}else{
+//					pops[p][pos] = false;
+//				}
 					pops[p][i] = rand.nextBoolean();
 //				}
 			}
+//			System.out.println("T's set ==> " + tNrs);
+//			System.out.println(Arrays.toString(turbines));
 		}
 
 		// evaluate initial populations (uses num_pop evals)
@@ -129,13 +159,14 @@ public class GA {
 			}
 
 			// Shuffle competitors
-			for (int c = 0; c < competitors.length; c++) {
+	/*		for (int c = 0; c < competitors.length; c++) {
 				int index = rand.nextInt(c + 1);
 				int temp = competitors[index];
 				competitors[index] = competitors[c];
 				competitors[c] = temp;
 			}
 
+			// Selecting best from 0-4 | 4-8 | 8- 12 | 12 -16 and so on
 			for (int t = 0; t < winners.length; t++) {
 				int winner = -1;
 				double winner_fit = Double.MAX_VALUE;
@@ -147,7 +178,36 @@ public class GA {
 					}
 				}
 				winners[t] = winner;
+			}*/
+			
+
+			
+			for (int t = 0; t < winners.length; t++) {
+				int winner = -1;
+				int index =0, indSel=0;
+				double winner_fit = Double.MAX_VALUE;
+				
+				for (int j = 0; j < competitors.length; j++) {
+					int competitor = competitors[j];
+					if(competitor == -1)
+						continue;
+					if (fits[competitor] < winner_fit) {
+						winner = competitor;
+						winner_fit = fits[winner];
+					}
+				}
+				competitors[winner] = -1;
+				winners[t] = winner;
+				
+				/*for (int c = 0; c < num_pop; c++) {
+					int competitor = competitors[c];
+					if (fits[competitor] < winner_fit) {
+						winner = competitor;
+						winner_fit = fits[winner];
+					}
+				}*/
 			}
+			
 
 			// int[] winners = sms.StochasticSampling(fits, 10);
 
@@ -222,8 +282,8 @@ public class GA {
 				System.out.println(c + " : Mutation --> " + m);*/
 				for (int j = 0; j < children[c].length; j++) {
 					if (rand.nextDouble() < mut_rate) {
-						children[c][j] = !children[c][j];
-						m++;
+//						children[c][j] = !children[c][j];
+						children[c][j] = true;
 					}
 				}
 			}
@@ -231,9 +291,9 @@ public class GA {
 //			System.out.println("Mutation --> " + m);
 
 			// elitism
-		/*	for (int c = 0; c < winners.length; c++) {
+			for (int c = 0; c < winners.length; c++) {
 				children[num_pop - winners.length + c] = pops[winners[c]];
-			}*/
+			}
 
 			pops = children;
 

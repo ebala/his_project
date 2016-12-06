@@ -61,7 +61,7 @@ public class GA1 {
 				minfit = fits[p];
 			}
 		}
-		Out.writeOut(iteration, tCount, minfit);
+//		Out.writeOut(iteration, tCount, minfit);
 		System.out.println(iteration + ". Turbine Count => " + tCount +
 				"  | Minimal fitness in population: " + minfit * 10000);
 	}

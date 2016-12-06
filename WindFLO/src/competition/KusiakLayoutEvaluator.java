@@ -39,7 +39,7 @@ public class KusiakLayoutEvaluator extends WindFarmLayoutEvaluator {
 		if (wfr <= 0)
 			return Double.MAX_VALUE;
 		int n = layout.length;
-
+		
 		energyCost = (((ct * n + cs * Math.floor(n / m)) * (0.666667 + 0.333333 * Math.exp(-0.00174 * n * n)) + com * n)
 				/ ((1 - Math.pow(1 + r, -y)) / r) / (8760.0 * scenario.wakeFreeEnergy * wfr * n)) + 0.1 / n;
 
@@ -114,7 +114,7 @@ public class KusiakLayoutEvaluator extends WindFarmLayoutEvaluator {
 	}
 
 	public boolean checkConstraint(double layout[][]) {
-		for (int i = 0; i < layout.length; i++) {
+		/*for (int i = 0; i < layout.length; i++) {
 			if (layout[i][0] != layout[i][0] || layout[i][1] != layout[i][1] || layout[i][0] < 0.0 || layout[i][1] < 0.0
 					|| layout[i][0] > getFarmWidth() || layout[i][1] > getFarmHeight()) {
 				System.out.println("Turbine " + i + "(" + layout[i][0] + ", " + layout[i][1] + ") is invalid.");
@@ -146,7 +146,7 @@ public class KusiakLayoutEvaluator extends WindFarmLayoutEvaluator {
 					}
 				}
 			}
-		}
+		}*/
 		return true;
 	}
 

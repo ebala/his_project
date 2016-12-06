@@ -59,7 +59,7 @@ public class CrossOvers {
 		// crossover
 		boolean[][] children = new boolean[poplCount][grid.size()];
 
-		for (int c = 0; c < (poplCount /*- winners.length*/); c++) {
+		for (int c = 0; c < (poplCount - winners.length); c++) {
 			int s1 = getRandomWithExclusion(rand, 0, winners.length - 1);
 			int s2 = getRandomWithExclusion(rand, 0, winners.length - 1, s1);
 			int s3 = getRandomWithExclusion(rand, 0, winners.length - 1, s1, s2);
