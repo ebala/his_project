@@ -74,8 +74,8 @@ public class Out {
 			}else{
 				out.println("");
 				out.println("                 " + content  );
-				out.println("");
 				out.println("--------------------------| End of Evaluation "+ it +" |------------------------"  );
+				out.println("");
 			}
 			out.close();
 			bw.close();
