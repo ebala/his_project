@@ -30,10 +30,10 @@ public class Main {
 	}
 
 	public void useLocalEvaluation() {
-		Out.createFile();
+		Out.createFile(SCENARIO_NUMBER);
 		WindScenario ws = null;
 		try {
-			ws = new WindScenario(WindScenario.getScenarioFilename(1, true));
+			ws = new WindScenario(WindScenario.getScenarioFilename(SCENARIO_NUMBER, true));
 		} catch (Exception e) {
 			System.err.println(e);
 			return;

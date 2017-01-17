@@ -5,25 +5,36 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Files;
 import java.util.Date;
 
 public class Out {
 
-	private static String path = "/var/www/html/";
-	private static String filePath = "/var/www/html/output.txt";
+	private static String path = "";
+	private static String filePath = "";
 
 	private static boolean writeOutput = true;
 	private static File file= null;
 	
-	public static void createFile() {
+	public static void createFile(int scenario) {
+		path = "D:/HIS/SEM3/HIS_Project/output/" + scenario;
+		
+		File pathDir = new File(path);
+		if(!pathDir.exists()){
+			pathDir.mkdirs();
+		}
+		
+		Date d = new Date();
+		String date = d.toString().replaceAll(" ", "_").replaceAll(":", "-");
+		filePath = path + "/out_" +date  + ".txt";
+
+		
 		file = new File(filePath);
 
 		try {
-			if (file.exists()) {
-				Date d = new Date();
-				Files.move(file.toPath(), (new File(path + "output_" + d.toString().replaceAll(" ", "_") + ".txt")).toPath());
-			}/*else{
+			
+			/*if (file.exists()) {
+				Files.move(file.toPath(), (new File(path + "output_" + date + ".txt")).toPath());
+			}else{
 				writeOutput = false;
 				return;
 			}*/
@@ -32,8 +43,8 @@ public class Out {
 			file.setWritable(true);
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file,true));
 			PrintWriter out = new PrintWriter(bw);
-			out.println("No Edges | No elitism | All 20 children from 3 parent crossover | ");
-			out.println("======================================================================");
+			out.println("Scenarion : " +scenario + " | Date : " + d.toString());
+			out.println("======================== Uniform + m = = .05 | edge sele =< 50% Edge Turb = 75%==============================================");
 			out.println("");
 			out.close();
 			bw.close();
@@ -69,14 +80,19 @@ public class Out {
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file,true));
 			PrintWriter out = new PrintWriter(bw);
+			String outText = "";
 			if(!isMinFit){
-				out.println("      |" + it + "      |" + content);
+				outText = "      |" + it + "      |" + content;
+				out.println(outText);
 			}else{
 				out.println("");
 				out.println("                 " + content  );
-				out.println("--------------------------| End of Evaluation "+ it +" |------------------------"  );
+				outText ="--------------------------| End of Evaluation "+ it +" |------------------------"  ;
+				out.println(outText);
 				out.println("");
+				System.out.println(" ................................................... "+content);
 			}
+			System.out.println(outText);
 			out.close();
 			bw.close();
 		} catch (Exception e) {

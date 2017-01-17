@@ -1,8 +1,10 @@
 package competition;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;import javax.swing.plaf.basic.BasicBorders.RadioButtonBorder;
 
 public class CrossOvers {
 
@@ -21,7 +23,7 @@ public class CrossOvers {
 		// crossover
 		boolean[][] children = new boolean[poplCount][grid.size()];
 
-		for (int c = 0; c < (poplCount - winners.length); c++) {
+		for (int c = 0; c < (poplCount - 5); c++) {
 			int s1 = rand.nextInt(winners.length);
 			int s2 = rand.nextInt(winners.length - 1);
 			if (s2 >= s1) {
@@ -59,15 +61,46 @@ public class CrossOvers {
 		// crossover
 		boolean[][] children = new boolean[poplCount][grid.size()];
 
-		for (int c = 0; c < (poplCount - winners.length); c++) {
-			int s1 = getRandomWithExclusion(rand, 0, winners.length - 1);
-			int s2 = getRandomWithExclusion(rand, 0, winners.length - 1, s1);
-			int s3 = getRandomWithExclusion(rand, 0, winners.length - 1, s1, s2);
+		/*Set<Integer> selectedP1 =new HashSet();
+		int s1 = getRandom( 0, winners.length - 1);
+		selectedP1.add(s1);*/
+		
+		for (int c = 0; c < (poplCount - 5); c++) {
+			
+		/*	if(selectedP1.size() == winners.length){
+				selectedP1 =new HashSet();
+				s1 = getRandom( 0, winners.length - 1);
+				selectedP1.add(s1);
+			}
+			
+			while(c!=0 && selectedP1.contains(s1)){
+				s1=getRandom( 0, winners.length - 1);
+				if(!selectedP1.contains(s1))
+					break;
+			}
+			selectedP1.add(s1);
+			
+			int s2=0 ;
+			if(s1+1< winners.length-1)
+				s2 = s1+1;
+			
+			int s3 =0;
+			if(s2+1< winners.length-1)
+				s3 = s2+1;
+			*/
+			
+			int[] winCopy = Arrays.copyOf(winners, winners.length);
+			
+			int s1 = getRandom(0, winCopy.length - 1);
+			int p1 = winCopy[s1];
+			winCopy = getTrimmedArray(winCopy, s1);
+			int s2 = getRandom( 0, winCopy.length - 1);
+			int p2 = winCopy[s2];
+			winCopy = getTrimmedArray(winCopy, s2);
+			int s3 = getRandom( 0, winCopy.length - 1);
+			int p3 = winCopy[s3];
 
-			int p1 = winners[s1];
-			int p2 = winners[s2];
-			int p3 = winners[s3];
-
+			
 			boolean[] parent1 = pops[p1];
 			boolean[] parent2 = pops[p2];
 			boolean[] parent3 = pops[p3];
@@ -82,7 +115,7 @@ public class CrossOvers {
 				} else if (parent2[j] == parent3[j]) {
 					child[j] = parent2[j];
 				} else {
-					child[j] = rand.nextBoolean();
+					child[j] = parent3[j];
 				}
 
 				children[c] = child;
@@ -103,18 +136,19 @@ public class CrossOvers {
 
 		boolean[][] children = new boolean[poplCount][grid.size()];
 
-		int child = -1;
-		for (int c = 0; c < poplCount; c++) {
-			int s1 = getRandomWithExclusion(rand, 0, winners.length - 1);
-			int s2 = getRandomWithExclusion(rand, 0, winners.length - 1, s1);
+		int loopCnt = poplCount-5;
+		
+		for (int c = 0; c < loopCnt; c++) {
+			int s1 = getRandom( 0, winners.length - 1);
+			int s2 = getRandom( 0, winners.length - 1, s1);
 
 			boolean[] parent1 = pops[winners[s1]];
 			boolean[] parent2 = pops[winners[s2]];
 			boolean[] c1 = parent1;
 			boolean[] c2 = parent2;
 
-			int point1 = getRandomWithExclusion(rand, 0, parent1.length - 1);
-			int point2 = getRandomWithExclusion(rand, 0, parent1.length - 1, point1);
+			int point1 = getRandom( 0, parent1.length - 1);
+			int point2 = getRandom( 0, parent1.length - 1, point1);
 
 			int diff = Math.abs(point2 - point1);
 
@@ -128,25 +162,31 @@ public class CrossOvers {
 				c1[i + point1] = sa2[i];
 				c2[i + point1] = sa1[i];
 			}
+			
 
-			child++;
-			if (child < poplCount)
-				children[child] = c1;
-			child++;
-			if (child < poplCount)
-				children[child] = c2;
-
-			if (child == poplCount) {
-				break;
-			}
+			if(rand.nextBoolean())
+				children[c] = c1;
+			else
+				children[c] = c2;
 
 		}
 
 		return children;
 	}
 
-	public int getRandomWithExclusion(Random rnd, int start, int end, int... exclude) {
-		int random = start + rnd.nextInt(end - start + 1 - exclude.length);
+	
+	public int[] getTrimmedArray(int[] src, int remIndex){
+    	
+    	int[] result = new int[src.length - 1];
+    	System.arraycopy(src, 0, result, 0, remIndex);
+    	if (src.length != remIndex) {
+    	    System.arraycopy(src, remIndex + 1, result, remIndex, src.length - remIndex - 1);
+    	}
+		return result;
+	}
+	
+	public int getRandom(int start, int end, Integer... exclude) {
+		int random = start + rand.nextInt(end - start + 1 - exclude.length);
 		for (int ex : exclude) {
 			if (random < ex) {
 				break;
