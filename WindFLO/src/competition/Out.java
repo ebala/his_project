@@ -13,38 +13,46 @@ public class Out {
 	private static String filePath = "";
 
 	private static boolean writeOutput = true;
-	private static File file= null;
-	
+	private static File file = null;
+
+	private static String fitFile = null;
+
 	public static void createFile(int scenario) {
-		path = "D:/HIS/SEM3/HIS_Project/output/" + scenario;
-		
-		File pathDir = new File(path);
-		if(!pathDir.exists()){
-			pathDir.mkdirs();
-		}
 		
 		Date d = new Date();
 		String date = d.toString().replaceAll(" ", "_").replaceAll(":", "-");
-		filePath = path + "/out_" +date  + ".txt";
-
 		
-		file = new File(filePath);
+		path = "D:/HIS/SEM3/HIS_Project/output/" + scenario + "/" + date +"/";
 
+		File pathDir = new File(path);
+		if (!pathDir.exists()) {
+			pathDir.mkdirs();
+		}
+
+
+		filePath = path + "/output.txt";
+
+		fitFile = path + "/fitness.txt";
+		
 		try {
-			
-			/*if (file.exists()) {
-				Files.move(file.toPath(), (new File(path + "output_" + date + ".txt")).toPath());
-			}else{
-				writeOutput = false;
-				return;
-			}*/
-			file =new File(filePath); 
+			// Create fitness file
+			file = new File(fitFile);
 			file.createNewFile();
 			file.setWritable(true);
-			BufferedWriter bw = new BufferedWriter(new FileWriter(file,true));
+		
+			// reset
+			file = null;
+
+			file = new File(filePath);
+
+			// now create out file
+			file = new File(filePath);
+			file.createNewFile();
+			file.setWritable(true);
+			BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
 			PrintWriter out = new PrintWriter(bw);
-			out.println("Scenarion : " +scenario + " | Date : " + d.toString());
-			out.println("======================== Uniform + m = = .05 | edge sele =< 50% Edge Turb = 75%==============================================");
+			out.println("Scenarion : " + scenario + " | Date : " + d.toString());
+			out.println("======================== ==============================================");
 			out.println("");
 			out.close();
 			bw.close();
@@ -55,42 +63,26 @@ public class Out {
 		}
 	}
 
-	/*public static void writeOut(int it, int tCount, double fv) {
-		if(!writeOutput){
+
+	public static void writeOut(int it, String content, boolean isMinFit) {
+		if (!writeOutput) {
 			return;
 		}
-		
+
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(filePath),true));
-			PrintWriter out = new PrintWriter(bw);
-			out.println("|" + it + "      |" + tCount + "    |" + fv + "   |");
-			out.close();
-			bw.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}*/
-	
-	public static void writeOut(int it, String content,boolean isMinFit) {
-		if(!writeOutput){
-			return;
-		}
-		
-		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(file,true));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
 			PrintWriter out = new PrintWriter(bw);
 			String outText = "";
-			if(!isMinFit){
+			if (!isMinFit) {
 				outText = "      |" + it + "      |" + content;
 				out.println(outText);
-			}else{
+			} else {
 				out.println("");
-				out.println("                 " + content  );
-				outText ="--------------------------| End of Evaluation "+ it +" |------------------------"  ;
+				out.println("                 " + content);
+				outText = "--------------------------| End of Evaluation " + it + " |------------------------";
 				out.println(outText);
 				out.println("");
-				System.out.println(" ................................................... "+content);
+				System.out.println(" ................................................... " + content);
 			}
 			System.out.println(outText);
 			out.close();
@@ -101,4 +93,53 @@ public class Out {
 		}
 	}
 
+	static String csvFile;
+	public static void createCSVFile(String fName){
+		csvFile = path + fName;
+		File f = new File(filePath);
+		try {
+			f.createNewFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public static void writeCSVData(double[][] layout){
+		
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(csvFile,true));
+			PrintWriter out = new PrintWriter(bw);
+			
+			for (int i = 0; i < layout.length; i++) {
+				out.println(layout[i][0] + "," + layout[i][1]);
+			}
+			
+			out.close();
+			bw.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static void writeFitness(double val){
+		
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(fitFile,true));
+			PrintWriter out = new PrintWriter(bw);
+			
+			out.println(val*10000);
+			
+			out.close();
+			bw.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
 }

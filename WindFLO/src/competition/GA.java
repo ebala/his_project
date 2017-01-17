@@ -34,6 +34,7 @@ public class GA {
 	private void evaluate(int iteration) {
 		int gridSize = grid.size();
 		turbines = new Integer[num_pop];
+		double[][] fitLayout = null;
 		double minfit = Double.MAX_VALUE;
 		int tCount = 0;
 
@@ -75,9 +76,14 @@ public class GA {
 			if (fits[p] < minfit) {
 				minfit = fits[p];
 				tCount = turbines[p];
+				fitLayout = layout;
 			}
 			Out.writeOut(p, "| TCOUNT : " + turbines[p] + "/" + gridSize + " | FIT => " + minfit*10000 + "  |", false);
 		}
+		
+		Out.writeFitness(minfit);
+		Out.createCSVFile(iteration+1 + "_data.csv");
+		Out.writeCSVData(fitLayout);
 		Out.writeOut(iteration, " Turbines =>  " + tCount + " |  Minimal fitness in population => " + minfit *10000, true);
 		System.out.println(tCount + " <-- Minimal fitness in population: " + minfit);
 	}
@@ -126,7 +132,7 @@ public class GA {
 //				 System.out.println("X - Axis --> " + grid.get(grid.size() - 1)[0]);
 //				 System.out.println("Y - Axis --> " + grid.get(grid.size() - 1)[1]);
 				 
-				if(edgeCondition < 0.5){
+				if(edgeCondition < 0.25){
 					double xPt = grid.get(i)[0];
 					double yPt = grid.get(i)[0];
 					//  Along x or y ==0 and for 75% probability
@@ -196,7 +202,7 @@ public class GA {
 
 			boolean[][] children = null;
 //			children = co.twoPointCrossOver(num_pop, grid, winners, pops);
-			children = co.uniformCrossOver(num_pop, grid, winners, pops);
+			children = co.threeParentCrossOver(num_pop, grid, winners, pops);
 			
 			/*if(rand.nextBoolean()){
 				System.out.println("Three parent crossover");
