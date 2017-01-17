@@ -9,7 +9,7 @@ import java.util.Date;
 
 public class Out {
 
-	private static String path = "";
+	private static String path = "D:/HIS/SEM3/HIS_Project/output/";
 	private static String filePath = "";
 
 	private static boolean writeOutput = true;
@@ -22,7 +22,7 @@ public class Out {
 		Date d = new Date();
 		String date = d.toString().replaceAll(" ", "_").replaceAll(":", "-");
 		
-		path = "D:/HIS/SEM3/HIS_Project/output/" + scenario + "/" + date +"/";
+		path = path + scenario + "/" + date +"/";
 
 		File pathDir = new File(path);
 		if (!pathDir.exists()) {
