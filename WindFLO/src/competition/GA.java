@@ -1,7 +1,6 @@
 package competition;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -170,7 +169,7 @@ public class GA {
 			// List<Integer> tList = Arrays.asList(turbines);
 			boolean[][] eliteParents = new boolean[eliteCount][grid.size()];
 			double[] eliteFit = new double[eliteCount];
-		/*	for (int t = 0; t < winners.length; t++) {
+			for (int t = 0; t < winners.length; t++) {
 				int winner = -1;
 				double winner_fit = Double.MAX_VALUE;
 				int jIndex = -1;
@@ -185,71 +184,16 @@ public class GA {
 				}
 				competitors[jIndex] = -1;
 				winners[t] = winner;
-				// Shortlisting elite parents for next iteration
+				// Short listing elite parents for next iteration
 				if (t < eliteCount) {
 					eliteParents[t] = pops[winner];
 					eliteFit[t] = fits[winner];
 				}
-			}*/
+			}
 
-			
-			for (int t = 0; t < eliteParents.length; t++) {
-			int winner = -1;
-			double winner_fit = Double.MAX_VALUE;
-			int jIndex = -1;
-
-			for (int j = 0; j < competitors.length; j++) {
-				int competitor = competitors[j];
-				if (competitor != -1 && fits[competitor] < winner_fit) {
-					winner = competitor;
-					winner_fit = fits[winner];
-					jIndex = j;
-				}
-			}
-			competitors[jIndex] = -1;
-			winners[t] = winner;
-			// Shortlisting elite parents for next iteration
-			if (t < eliteCount) {
-				eliteParents[t] = pops[winner];
-				eliteFit[t] = fits[winner];
-			}
-		}
-			
-			
-			for(int w=0; w<winners.length;w++){ // for winners
-				double winnerFit = Double.MAX_VALUE;
-				int winnerIndex = 0;
-				
-				for(int ts=0; ts<tour_size;ts++){ // for parents in that tour
-					int index =  getRandom(rand,0,num_pop-1,winners);
-					if(fits[index]<winnerFit){
-						winnerFit = fits[index];
-						winnerIndex=index;
-					}
-				}
-				
-				winners[w] = winnerIndex;
-			}
-			
-			
-			
-			
-			
-			
 			boolean[][] children = null;
 			// children = co.twoPointCrossOver(num_pop, grid, winners, pops);
 			children = co.threeParentCrossOver(num_pop, grid, winners, pops);
-
-			/*
-			 * if(rand.nextBoolean()){
-			 * System.out.println("Three parent crossover"); Out.writeOut(0,
-			 * "************ Three parent crossover********************",
-			 * false); children = co.threeParentCrossOver(num_pop, grid,
-			 * winners, pops); }else{ System.out.println("Uniform crossover");
-			 * Out.writeOut(0,
-			 * "************ Uniform crossover********************", false);
-			 * children = co.uniformCrossOver(num_pop, grid, winners, pops); }
-			 */
 
 			// mutate
 			for (int c = 0; c < (num_pop - eliteCount); c++) {
@@ -297,36 +241,6 @@ public class GA {
 			}
 			random++;
 		}
-		return random;
-	}
-	
-	/**
-	 * 
-	 * @param rnd
-	 * @param start
-	 * @param end
-	 * @param exclude
-	 * @return
-	 */
-	public int getRandom(Random rnd, int start, int end, int... exclude) {
-		int random = start + rnd.nextInt(end - start + 1);
-		
-		Integer[] newArray = new Integer[exclude.length];
-		int i = 0;
-		for (int value : exclude) {
-		    newArray[i++] = Integer.valueOf(value);
-		}
-		
-		 List<Integer> list = Arrays.asList((Integer[]) newArray);
-		 
-		 int failCond =0;
-		 while(list.contains(random)){
-			 failCond++;
-			 random = start + rnd.nextInt(end - start + 1);
-			 // Just to be sure that it does not run into infinite loop
-			 if(failCond>10)
-				 break;
-		 }
 		return random;
 	}
 
