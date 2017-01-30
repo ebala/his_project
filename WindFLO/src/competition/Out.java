@@ -9,7 +9,8 @@ import java.util.Date;
 
 public class Out {
 
-	private static String path = "D:/HIS/SEM3/HIS_Project/output/";
+	private static String basePath = "D:/HIS/SEM3/HIS_Project/trial/";
+	private static String path = "";
 	private static String filePath = "";
 
 	private static boolean writeOutput = true;
@@ -17,12 +18,12 @@ public class Out {
 
 	private static String fitFile = null;
 
-	public static void createFile(int scenario) {
+	public static void createFile(String run,int scenario) {
 		
 		Date d = new Date();
 		String date = d.toString().replaceAll(" ", "_").replaceAll(":", "-");
 		
-		path = path + scenario + "/" + date +"/";
+		path = basePath + "/" + run + "/" +scenario + "/" + date +"/";
 
 		File pathDir = new File(path);
 		if (!pathDir.exists()) {

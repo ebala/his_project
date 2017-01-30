@@ -6,7 +6,7 @@ import java.util.Random;
 
 import evaluation.WindFarmLayoutEvaluator;
 
-public class GA {
+public class GA_25_01 {
 	private WindFarmLayoutEvaluator wfle;
 	private boolean[][] pops;
 	private double[] fits;
@@ -23,7 +23,7 @@ public class GA {
 
 	private int eliteCount = 5;
 
-	public GA(WindFarmLayoutEvaluator evaluator) {
+	public GA_25_01(WindFarmLayoutEvaluator evaluator) {
 		wfle = evaluator;
 		num_pop = 20;
 		tour_size = 4;
@@ -62,10 +62,7 @@ public class GA {
 			}
 
 			double coe = 0;
-			if(iteration>1 && p>= (num_pop-eliteCount)){
-				coe = fits[p];
-			}
-			else if (wfle.checkConstraint(layout)) {
+			if (wfle.checkConstraint(layout)) {
 				// XXX: Following lines cost one evaluation in competition mode!
 				wfle.evaluate(layout);
 				coe = wfle.getEnergyCost();
@@ -83,7 +80,7 @@ public class GA {
 				tCount = turbines[p];
 				fitLayout = layout;
 			}
-			Out.writeOut(p, "| TCOUNT : " + turbines[p] + "/" + gridSize + " | FIT => " + coe * 10000 + "  |",
+			Out.writeOut(p, "| TCOUNT : " + turbines[p] + "/" + gridSize + " | FIT => " + minfit * 10000 + "  |",
 					false);
 		}
 
@@ -134,10 +131,24 @@ public class GA {
 		for (int p = 0; p < num_pop; p++) {
 			float edgeCondition = rand.nextFloat();
 			for (int i = 0; i < grid.size(); i++) {
-				if (edgeCondition < 0.40) {
-					populateEdges(p, i, 0.75);
-				} else if (edgeCondition < 0.50) {
-					populateEdges(p, i, 0.60);
+				// System.out.println("X - Axis --> " + grid.get(grid.size() -
+				// 1)[0]);
+				// System.out.println("Y - Axis --> " + grid.get(grid.size() -
+				// 1)[1]);
+
+				if (edgeCondition < 0.50) {
+					double xPt = grid.get(i)[0];
+					double yPt = grid.get(i)[0];
+					// Along x or y ==0 and for 75% probability
+					if ((xPt == 0.0 || yPt == 0.0) && rand.nextFloat() < 0.75) {
+						pops[p][i] = true;
+					}
+					// Along x or y ==max and for 75% probability
+					else if ((xPt == grid.get(grid.size() - 1)[0] || yPt == grid.get(grid.size() - 1)[1])
+							&& rand.nextFloat() < 0.75) {
+						pops[p][i] = true;
+					} else
+						pops[p][i] = rand.nextBoolean();
 				} else {
 					pops[p][i] = rand.nextBoolean();
 				}
@@ -166,10 +177,8 @@ public class GA {
 				competitors[c] = temp;
 			}
 
-			// Rank selection
 			// List<Integer> tList = Arrays.asList(turbines);
 			boolean[][] eliteParents = new boolean[eliteCount][grid.size()];
-			double[] eliteFit = new double[eliteCount];
 			for (int t = 0; t < winners.length; t++) {
 				int winner = -1;
 				double winner_fit = Double.MAX_VALUE;
@@ -188,7 +197,6 @@ public class GA {
 				// Shortlisting elite parents for next iteration
 				if (t < eliteCount) {
 					eliteParents[t] = pops[winner];
-					eliteFit[t] = fits[winner];
 				}
 			}
 
@@ -220,29 +228,19 @@ public class GA {
 			// elitism
 			for (int c = 0; c < eliteParents.length; c++) {
 				children[num_pop - eliteCount + c] = eliteParents[c];
-				fits[num_pop - eliteCount + c] = eliteFit[c];
 			}
+
+			// elitism
+			/*
+			 * for (int c = 0; c < winners.length; c++) { children[num_pop -
+			 * winners.length + c] = pops[winners[c]]; }
+			 */
 
 			pops = children;
 
 			// evaluate
 			evaluate(i + 1);
 		}
-	}
-
-	private void populateEdges(int p, int i, double probability) {
-		double xPt = grid.get(i)[0];
-		double yPt = grid.get(i)[0];
-		// Along x or y ==0 and for 75% probability
-		if ((xPt == 0.0 || yPt == 0.0) && rand.nextFloat() < probability) {
-			pops[p][i] = true;
-		}
-		// Along x or y ==max and for 75% probability
-		else if ((xPt == grid.get(grid.size() - 1)[0] || yPt == grid.get(grid.size() - 1)[1])
-				&& rand.nextFloat() < probability) {
-			pops[p][i] = true;
-		} else
-			pops[p][i] = rand.nextBoolean();
 	}
 
 	public int getRandomWithExclusion(Random rnd, int start, int end, int... exclude) {

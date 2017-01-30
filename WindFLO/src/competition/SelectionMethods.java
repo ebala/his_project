@@ -11,6 +11,16 @@ public class SelectionMethods {
 	
 	private Random rand = new Random();
 	
+	
+	public int[] tournamentSelection(double[] population, int n, int tourParents){
+		
+		
+		
+		
+		return null;
+		
+	}
+	
   /**	
     *
     * @param population - set of individuals' segments. Segment is equal to individual's fitness.

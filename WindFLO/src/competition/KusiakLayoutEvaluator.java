@@ -114,7 +114,7 @@ public class KusiakLayoutEvaluator extends WindFarmLayoutEvaluator {
 	}
 
 	public boolean checkConstraint(double layout[][]) {
-		/*for (int i = 0; i < layout.length; i++) {
+		for (int i = 0; i < layout.length; i++) {
 			if (layout[i][0] != layout[i][0] || layout[i][1] != layout[i][1] || layout[i][0] < 0.0 || layout[i][1] < 0.0
 					|| layout[i][0] > getFarmWidth() || layout[i][1] > getFarmHeight()) {
 				System.out.println("Turbine " + i + "(" + layout[i][0] + ", " + layout[i][1] + ") is invalid.");
@@ -146,7 +146,7 @@ public class KusiakLayoutEvaluator extends WindFarmLayoutEvaluator {
 					}
 				}
 			}
-		}*/
+		}
 		return true;
 	}
 
