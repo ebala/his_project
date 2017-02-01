@@ -62,10 +62,9 @@ public class GA {
 			}
 
 			double coe = 0;
-			if(iteration>1 && p>= (num_pop-eliteCount)){
+			if (iteration > 1 && p >= (num_pop - eliteCount)) {
 				coe = fits[p];
-			}
-			else if (wfle.checkConstraint(layout)) {
+			} else if (wfle.checkConstraint(layout)) {
 				// XXX: Following lines cost one evaluation in competition mode!
 				wfle.evaluate(layout);
 				coe = wfle.getEnergyCost();
@@ -83,8 +82,7 @@ public class GA {
 				tCount = turbines[p];
 				fitLayout = layout;
 			}
-			Out.writeOut(p, "| TCOUNT : " + turbines[p] + "/" + gridSize + " | FIT => " + coe * 10000 + "  |",
-					false);
+			Out.writeOut(p, "| TCOUNT : " + turbines[p] + "/" + gridSize + " | FIT => " + coe * 10000 + "  |", false);
 		}
 
 		Out.writeFitness(minfit);
@@ -131,6 +129,7 @@ public class GA {
 
 		// mTournaments Selection
 		// Bala : true for all farms around edges x=0 & y=0
+
 		for (int p = 0; p < num_pop; p++) {
 			float edgeCondition = rand.nextFloat();
 			for (int i = 0; i < grid.size(); i++) {
@@ -148,7 +147,7 @@ public class GA {
 		evaluate(0);
 
 		// GA
-		for (int i = 0; i < (2000 / num_pop); i++) {
+		for (int i = 0; i < (2000 / (num_pop-5)); i++) { //133
 
 			// rank populations (tournament)
 			int[] winners = new int[num_pop / 2];

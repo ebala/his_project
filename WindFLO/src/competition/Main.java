@@ -8,14 +8,14 @@ public class Main {
 	// Change the following lines to fit your needs for the competition
 	private final String USER_API_TOKEN = "9HQBW1V8IXEPXBR19HKVPMO7PHQSLT"; // Place your User API Token here!
 	private final String RUN_API_TOKEN = "PEHIYHCYXDI22KT8UZDN5ZWKFSM7DO"; // Place your Run API Token here!
-	private final int SCENARIO_NUMBER = 0;
+	private final int SCENARIO_NUMBER = 2;
 	
 	public static void main(String argv[]) {
 		Main m = new Main();
 		
-		m.useLocalEvaluation();
+//		m.useLocalEvaluation();
 		// WARNING: Uncomment the following statement to use the server evaluation.
-//		 m.useCompetitionServerEvaluation();
+		 m.useCompetitionServerEvaluation();
 	}
 
 	public void useCompetitionServerEvaluation() {
@@ -34,13 +34,13 @@ public class Main {
 	public void useLocalEvaluation() {
 		
 		
-//		for(int scenerio =0; scenerio <4 ; scenerio++){
-//			for(int repeat =0; repeat<3;repeat++){
+		for(int scenerio =0; scenerio <4 ; scenerio++){
+			for(int repeat =0; repeat<2;repeat++){
 				
-				Out.createFile("local",SCENARIO_NUMBER);
+				Out.createFile("local",scenerio);
 				WindScenario ws = null;
 				try {
-					ws = new WindScenario(WindScenario.getScenarioFilename(SCENARIO_NUMBER, true));
+					ws = new WindScenario(WindScenario.getScenarioFilename(scenerio, true));
 				} catch (Exception e) {
 					System.err.println(e);
 					return;
@@ -49,8 +49,8 @@ public class Main {
 				wfle.initialize(ws);
 				GA algorithm = new GA(wfle);
 				algorithm.run();
-		// }
-		// }
+		 }
+		 }
 		
 	}
 }
