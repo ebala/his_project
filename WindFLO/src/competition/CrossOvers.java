@@ -91,13 +91,13 @@ public class CrossOvers {
 			
 			int[] winCopy = Arrays.copyOf(winners, winners.length);
 			
-			int s1 = getRandom(0, winCopy.length - 1);
+			int s1 = getRandom(rand,0, winCopy.length - 1);
 			int p1 = winCopy[s1];
-			winCopy = getTrimmedArray(winCopy, s1);
-			int s2 = getRandom( 0, winCopy.length - 1);
+//			winCopy = getTrimmedArray(winCopy, s1);
+			int s2 = getRandom(rand, 0, winCopy.length - 1,s1);
 			int p2 = winCopy[s2];
-			winCopy = getTrimmedArray(winCopy, s2);
-			int s3 = getRandom( 0, winCopy.length - 1);
+//			winCopy = getTrimmedArray(winCopy, s2);
+			int s3 = getRandom(rand, 0, winCopy.length - 1,s1,s2);
 			int p3 = winCopy[s3];
 
 			
@@ -139,16 +139,16 @@ public class CrossOvers {
 		int loopCnt = poplCount-5;
 		
 		for (int c = 0; c < loopCnt; c++) {
-			int s1 = getRandom( 0, winners.length - 1);
-			int s2 = getRandom( 0, winners.length - 1, s1);
+			int s1 = getRandom(rand, 0, winners.length - 1);
+			int s2 = getRandom(rand, 0, winners.length - 1, s1);
 
 			boolean[] parent1 = pops[winners[s1]];
 			boolean[] parent2 = pops[winners[s2]];
 			boolean[] c1 = parent1;
 			boolean[] c2 = parent2;
 
-			int point1 = getRandom( 0, parent1.length - 1);
-			int point2 = getRandom( 0, parent1.length - 1, point1);
+			int point1 = getRandom(rand, 0, parent1.length - 1);
+			int point2 = getRandom(rand, 0, parent1.length - 1, point1);
 
 			int diff = Math.abs(point2 - point1);
 
@@ -185,7 +185,7 @@ public class CrossOvers {
 		return result;
 	}
 	
-	public int getRandom(int start, int end, Integer... exclude) {
+/*	public int getRandom(int start, int end, Integer... exclude) {
 		int random = start + rand.nextInt(end - start + 1 - exclude.length);
 		for (int ex : exclude) {
 			if (random < ex) {
@@ -193,6 +193,36 @@ public class CrossOvers {
 			}
 			random++;
 		}
+		return random;
+	}
+	*/
+	/**
+	 * 
+	 * @param rnd
+	 * @param start
+	 * @param end
+	 * @param exclude
+	 * @return
+	 */
+	public int getRandom(Random rnd, int start, int end, int... exclude) {
+		int random = start + rnd.nextInt(end - start + 1);
+		
+		Integer[] newArray = new Integer[exclude.length];
+		int i = 0;
+		for (int value : exclude) {
+		    newArray[i++] = Integer.valueOf(value);
+		}
+		
+		 List<Integer> list = Arrays.asList((Integer[]) newArray);
+		 
+		 int failCond =0;
+		 while(list.contains(random)){
+			 failCond++;
+			 random = start + rnd.nextInt(end - start + 1);
+			 // Just to be sure that it does not run into infinite loop
+			 if(failCond>10)
+				 break;
+		 }
 		return random;
 	}
 

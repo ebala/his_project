@@ -1,5 +1,7 @@
 package competition;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -106,5 +108,35 @@ public class SelectionMethods {
 		return winners;
    }
    
+   
+   /**
+	 * 
+	 * @param rnd
+	 * @param start
+	 * @param end
+	 * @param exclude
+	 * @return
+	 */
+	public int getRandom(Random rnd, int start, int end, int... exclude) {
+		int random = start + rnd.nextInt(end - start + 1);
+		
+		Integer[] newArray = new Integer[exclude.length];
+		int i = 0;
+		for (int value : exclude) {
+		    newArray[i++] = Integer.valueOf(value);
+		}
+		
+		 List<Integer> list = Arrays.asList((Integer[]) newArray);
+		 
+		 int failCond =0;
+		 while(list.contains(random)){
+			 failCond++;
+			 random = start + rnd.nextInt(end - start + 1);
+			 // Just to be sure that it does not run into infinite loop
+			 if(failCond>10)
+				 break;
+		 }
+		return random;
+	}
 
 }
