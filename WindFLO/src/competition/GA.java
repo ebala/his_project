@@ -76,8 +76,8 @@ public class GA {
 				minfit = coe;
 			}
 
-			// Out.createCSVFile(p + "_layout_data.csv");
-			// Out.writeCSVData(layout);
+			Out.createCSVFile(p + "_layout_data.csv");
+			Out.writeCSVData(layout);
 
 			fits[p] = coe;
 			if (fits[p] < minfit) {
@@ -91,7 +91,7 @@ public class GA {
 		Out.writeFitness(minfit);
 		Out.createCSVFile(iteration + 1 + "_data.csv");
 		Out.writeCSVData(fitLayout);
-		Out.writeOut(iteration, " Turbines =>  " + tCount + " |  Minimal fitness in population => " + (minfit * 10000 ) ,
+		Out.writeOut(iteration, " Turbines =>  " + tCount + " |  Minimal fitness in population => " + (minfit * 10000),
 				true);
 		System.out.println(tCount + " <-- Minimal fitness in population: " + minfit);
 	}
@@ -131,39 +131,37 @@ public class GA {
 		// }
 		// }
 
-		// mTournaments Selection
-		// Bala : true for all farms around edges x=0 & y=0
-
-		/*
-		 * for (int p = 0; p < num_pop; p++) { float edgeCondition =
-		 * rand.nextFloat(); for (int i = 0; i < grid.size(); i++) { if
-		 * (edgeCondition < 0.40) { populateEdges(p, i, 0.75); } else if
-		 * (edgeCondition < 0.50) { populateEdges(p, i, 0.60); } else {
-		 * pops[p][i] = rand.nextBoolean(); } } }
-		 */
-
 		double xPt = grid.get(0)[0];
 		int row = 1;
 		float constant = 0.00f;
 		for (int p = 0; p < num_pop; p++) {
 
-			if (p <= 8) {
+			if (p <= 6) {
 				for (int i = 0; i < grid.size(); i++) {
-
 					double nXPt = grid.get(i)[0];
-
 					if (xPt == nXPt) {
-						pops[p][i] = rand.nextBoolean(); // set random
-						float r = rand.nextFloat();
-						if (p % 2 == 0) { // Alternative rows
+
+						if (p % 2 == 0) { // Alternative layout
 							pops[p][i] = false; // default false
-							if ((row + p) % 2 == 0 && rand.nextFloat() < 0.90) {
-								pops[p][i] = true;
+							if (row % 2 == 0) {
+								if (rand.nextFloat() <= 0.95) { // col 1
+									pops[p][i] = true;
+								}else{
+									pops[p][i] = rand.nextBoolean();
+								}
+							} else if (rand.nextFloat() <= 0.10) { // col 2
+								pops[p][i] =rand.nextBoolean();
 							}
 						} else { // alternative layout
-							pops[p][i] = true; // default false
-							if ((row + p) % 2 == 0 && rand.nextFloat() < 0.90) {
-								pops[p][i] = false;
+							pops[p][i] = false; // default false
+							if (row % 2 == 1) {
+								if (rand.nextFloat() <= 0.95) { // col 1
+									pops[p][i] = true;
+								}else{
+									pops[p][i] = rand.nextBoolean();
+								}
+							} else if (rand.nextFloat() <= 0.10) { // col 2
+								pops[p][i] = rand.nextBoolean();
 							}
 						}
 					} else {
@@ -172,9 +170,7 @@ public class GA {
 					}
 				}
 			} else {
-//				constant += (0.75 / (num_pop-6));
-				constant += (0.75 / (num_pop-8));
-				// float edgeCondition = rand.nextFloat();
+				constant += (0.9 / (num_pop-8));
 				for (int i = 0; i < grid.size(); i++) {
 					if (rand.nextFloat() < constant) { // .40is good
 						pops[p][i] = true;
@@ -186,27 +182,6 @@ public class GA {
 			}
 		}
 
-		/*
-		 * float constant = 0.10f; for (int p = 0; p < num_pop; p++) { if(p>=5){
-		 * constant += 0.75/(num_pop-2); } System.out.println(constant); //float
-		 * edgeCondition = rand.nextFloat(); for (int i = 0; i < grid.size();
-		 * i++) { if(rand.nextFloat() < constant){ // .40is good pops[p][i] =
-		 * true; } else{ pops[p][i] = rand.nextBoolean(); }
-		 * 
-		 * } }
-		 */
-
-		// best for now
-		/*
-		 * for (int p = 0; p < num_pop; p++) { //float edgeCondition =
-		 * rand.nextFloat(); for (int i = 0; i < grid.size(); i++) {
-		 * if(rand.nextFloat() < 0.20){ // .40is good pops[p][i] = true; } else{
-		 * pops[p][i] = rand.nextBoolean(); }
-		 * 
-		 * } }
-		 */
-
-		// evaluate initial populations (uses num_pop evals)
 		evaluate(0);
 
 		// GA
@@ -229,6 +204,7 @@ public class GA {
 			}
 
 			// List<Integer> tList = Arrays.asList(turbines);
+			int bestWinner = -1;
 			boolean[][] eliteParents = new boolean[eliteCount][grid.size()];
 			double[] eliteFit = new double[eliteCount];
 			List<Double> winnerList = new ArrayList<>();
@@ -296,8 +272,10 @@ public class GA {
 		else if ((xPt == grid.get(grid.size() - 1)[0] || yPt == grid.get(grid.size() - 1)[1])
 				&& rand.nextFloat() < probability) {
 			pops[p][i] = true;
-		} else
-			pops[p][i] = rand.nextBoolean();
+		} else {
+			if (rand.nextFloat() < 0.75)
+				pops[p][i] = rand.nextBoolean();
+		}
 	}
 
 	public int getRandomWithExclusion(Random rnd, int start, int end, int... exclude) {

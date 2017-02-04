@@ -161,10 +161,10 @@ public class WindScenario {
 		String file="";
 		if (hasObstacles) {
 			file = "obs_0" + number + ".xml";
-			fname = WindScenario.class.getResource("obs_0" + number + ".xml");
+			fname = WindScenario.class.getResource(file);
 		} else {
 			file = "0" + number + ".xml";
-			fname = WindScenario.class.getResource("0" + number + ".xml");
+			fname = WindScenario.class.getResource(file);
 		}
 		if (fname.getFile().isEmpty()) {
 			System.err.println("Scenario not found: " + fname);

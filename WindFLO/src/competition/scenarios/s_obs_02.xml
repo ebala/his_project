@@ -35,6 +35,6 @@
        <Width>6930</Width>
        <Height>12320</Height>
        <NTurbines>400</NTurbines>
-       <WakeFreeEnergy>5504.29</WakeFreeEnergy>
+       <WakeFreeEnergy>14045.7</WakeFreeEnergy>
    </Parameters>
 </WindField>

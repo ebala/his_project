@@ -1,10 +1,8 @@
 package competition;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;import javax.swing.plaf.basic.BasicBorders.RadioButtonBorder;
 
 public class CrossOvers {
 
@@ -67,31 +65,13 @@ public class CrossOvers {
 		
 		for (int c = 0; c < (poplCount - 5); c++) {
 			
-		/*	if(selectedP1.size() == winners.length){
-				selectedP1 =new HashSet();
-				s1 = getRandom( 0, winners.length - 1);
-				selectedP1.add(s1);
-			}
-			
-			while(c!=0 && selectedP1.contains(s1)){
-				s1=getRandom( 0, winners.length - 1);
-				if(!selectedP1.contains(s1))
-					break;
-			}
-			selectedP1.add(s1);
-			
-			int s2=0 ;
-			if(s1+1< winners.length-1)
-				s2 = s1+1;
-			
-			int s3 =0;
-			if(s2+1< winners.length-1)
-				s3 = s2+1;
-			*/
-			
 			int[] winCopy = Arrays.copyOf(winners, winners.length);
 			
-			int s1 = getRandom(rand,0, winCopy.length - 1);
+			int s1 = 0;
+			if(c > 2){
+				s1 = getRandom(rand,0, winCopy.length - 1);
+			}
+			 // set s1 to always the best
 			int p1 = winCopy[s1];
 //			winCopy = getTrimmedArray(winCopy, s1);
 			int s2 = getRandom(rand, 0, winCopy.length - 1,s1);

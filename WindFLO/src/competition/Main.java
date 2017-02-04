@@ -34,8 +34,8 @@ public class Main {
 	public void useLocalEvaluation() {
 		
 		
-		for(int scenerio =1; scenerio <5 ; scenerio++){
-			for(int repeat =0; repeat<5;repeat++){
+		for(int scenerio =0; scenerio <5 ; scenerio++){
+			for(int repeat =0; repeat<3;repeat++){
 				
 				Out.createFile("local",scenerio);
 				WindScenario ws = null;
