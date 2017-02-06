@@ -1,6 +1,5 @@
 package competition.scenarios;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -160,7 +159,7 @@ public class WindScenario {
 		URL fname = null;
 		String file="";
 		if (hasObstacles) {
-			file = "obs_0" + number + ".xml";
+			file = "s_obs_0" + number + ".xml";
 			fname = WindScenario.class.getResource(file);
 		} else {
 			file = "0" + number + ".xml";

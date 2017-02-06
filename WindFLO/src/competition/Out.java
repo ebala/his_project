@@ -9,9 +9,10 @@ import java.util.Date;
 
 public class Out {
 
-	private static String basePath = "D:/HIS/SEM3/HIS_Project/saturday/ppt/";
+	private static String basePath = "D:/HIS/SEM3/HIS_Project/positions/";
 	private static String path = "";
 	private static String filePath = "";
+	private static String posFile = "";
 
 	private static boolean writeOutput = true;
 	private static File file = null;
@@ -35,12 +36,21 @@ public class Out {
 
 		fitFile = path + "/fitness.txt";
 		
+		posFile = path + "position_file.txt";
+		
+		
 		try {
 			// Create fitness file
 			file = new File(fitFile);
 			file.createNewFile();
 			file.setWritable(true);
 		
+			File file1 = new File(posFile);
+			if(!file1.exists()){
+				file1.createNewFile();
+				file1.setWritable(true);
+			}
+			
 			// reset
 			file = null;
 
@@ -133,6 +143,23 @@ public class Out {
 			PrintWriter out = new PrintWriter(bw);
 			
 			out.println(val*10000);
+			
+			out.close();
+			bw.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static void writePos(String val){
+		
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(posFile,true));
+			PrintWriter out = new PrintWriter(bw);
+			
+			out.println(val);
 			
 			out.close();
 			bw.close();

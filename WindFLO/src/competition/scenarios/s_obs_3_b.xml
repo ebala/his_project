@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <WindField><!--Wind data from IN farm-->
-    <Angles>
-    
+   <Angles>
       <angle c="6.8133" k="2.0807" omega="0.021471" theta="0"/>
-       <angle c="5.5128" k="1.6025" omega="0.01244" theta="15"/>
-       <angle c="4.7699" k="2.0371" omega="0.0099521" theta="30"/>
+      <angle c="5.5128" k="1.6025" omega="0.01244" theta="15"/>
+      <angle c="4.7699" k="2.0371" omega="0.0099521" theta="30"/>
       <angle c="4.0184" k="1.6617" omega="0.010874" theta="45"/>
       <angle c="6.1907" k="2.3414" omega="0.017508" theta="60"/>
       <angle c="7.1184" k="2.9483" omega="0.026815" theta="75"/>
@@ -25,7 +24,7 @@
       <angle c="8.1378" k="3.5202" omega="0.067361" theta="300"/>
       <angle c="6.9238" k="3.3958" omega="0.045153" theta="315"/>
       <angle c="5.8867" k="2.7253" omega="0.032529" theta="330"/>
-      <angle c="7.0592" k="2.3456" omega="0.03345" theta="345"/>   
+      <angle c="7.0592" k="2.3456" omega="0.03345" theta="345"/>
    </Angles>
    <Obstacles>
        <obstacle xmin="1347" ymin="2053" xmax="4042" ymax="3080"/>

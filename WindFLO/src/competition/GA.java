@@ -62,7 +62,7 @@ public class GA {
 			}
 
 			double coe = 0;
-			if (iteration > 1 && p >= (num_pop - eliteCount)) {
+			if (iteration > 0 && p >= (num_pop - eliteCount)) {
 				coe = fits[p];
 			} else if (wfle.checkConstraint(layout)) {
 				// XXX: Following lines cost one evaluation in competition mode!
@@ -85,7 +85,7 @@ public class GA {
 				tCount = turbines[p];
 				fitLayout = layout;
 			}
-			Out.writeOut(p, "| TCOUNT : " + turbines[p] + "/" + gridSize + " | FIT => " + coe * 10000 + "  |", false);
+			Out.writeOut(p, "| TCOUNT : " + turbines[p] + "/" + gridSize + " | FIT => " + (coe * 10000) + "  |", false);
 		}
 
 		Out.writeFitness(minfit);
@@ -96,14 +96,94 @@ public class GA {
 		System.out.println(tCount + " <-- Minimal fitness in population: " + minfit);
 	}
 
+	public void run1() {
+
+		double fitness = 100;
+
+		//8.055000000000001 | 9.255000000000019
+		
+		for (double xd = 8.001 ; xd < 12 ; xd = xd + 0.1) {
+			for (double yd = 8.001 ; yd < 12 ; yd = yd + 0.1) {
+				
+				grid = new ArrayList<double[]>();
+				fits = new double[num_pop];
+				
+				double interval = xd* wfle.getTurbineRadius();
+				double h = yd* wfle.getTurbineRadius();
+
+				for (double x = 0.0; x < wfle.getFarmWidth(); x += interval) {
+					for (double y = 0.0; y < wfle.getFarmHeight(); y += h) {
+						boolean valid = true;
+						for (int o = 0; o < wfle.getObstacles().length; o++) {
+							double[] obs = wfle.getObstacles()[o];
+							if (x > obs[0] && y > obs[1] && x < obs[2] && y < obs[3]) {
+								valid = false;
+							}
+						}
+
+						if (valid) {
+							double[] point = { x, y };
+							grid.add(point);
+						}
+					}
+				}
+
+				boolean[] pops = new boolean[grid.size()];
+
+				for (int i = 0; i < grid.size(); i++) {
+//					if(rand.nextFloat() < 0.5)
+						pops[i] = true;
+				}
+
+				double[][] layout = new double[pops.length][2];
+				int l_i = 0;
+				for (int i = 0; i < grid.size(); i++) {
+					if (pops[i]) {
+						layout[l_i][0] = grid.get(i)[0];
+						layout[l_i][1] = grid.get(i)[1];
+						l_i++;
+					}
+				}
+
+				double coe = 0;
+				if (wfle.checkConstraint(layout)) {
+					// XXX: Following lines cost one evaluation in competition
+					// mode!
+					wfle.evaluate(layout);
+					coe = wfle.getEnergyCost();
+				}
+
+				System.out.println("x dist => " + xd + " | y dist => " + yd );
+				if(coe<fitness){
+					fitness = coe;
+					System.out.println("x dist => " + xd + " | y dist => " + yd + " | Fitness -> " + coe *10000);
+					Out.writePos("x dist => " + xd + " | y dist => " + yd + " | Fitness -> " + coe *10000);
+				}
+
+			}
+		}
+	}
+
+	/**
+	 * 
+	 */
 	public void run() {
+
+//		testhw();
+
+		// 0 => 8.205000000000004 | 9.40500000000002
+		// 1 => 8.055000000000001 | 9.255000000000019
+		// 2 => 8.451000000000006 | 9.651000000000023
+		// 3 => 9.200999999999995 | 8.001 
+		// 4 => 8.201000000000002 | 9.50100000000002
 		// set up grid
 		// centers must be > 8*R apart
 		// double interval = 8.001 * wfle.getTurbineRadius();
-		double interval = 8.001 * wfle.getTurbineRadius();
+		double interval = 10.35 * wfle.getTurbineRadius();
+		double h = 10.05 * wfle.getTurbineRadius();
 
 		for (double x = 0.0; x < wfle.getFarmWidth(); x += interval) {
-			for (double y = 0.0; y < wfle.getFarmHeight(); y += interval) {
+			for (double y = 0.0; y < wfle.getFarmHeight(); y += h) {
 				boolean valid = true;
 				for (int o = 0; o < wfle.getObstacles().length; o++) {
 					double[] obs = wfle.getObstacles()[o];
@@ -125,18 +205,17 @@ public class GA {
 
 		// mTournaments Selection
 		// Bala : true for all farms around edges x=0 & y=0
-		// for (int p = 0; p < num_pop; p++) {
-		// for (int i = 0; i < grid.size(); i++) {
-		// pops[p][i] = rand.nextBoolean();
-		// }
-		// }
+		/*
+		 * for (int p = 0; p < num_pop; p++) { for (int i = 0; i < grid.size();
+		 * i++) { populateEdges(p, i, 80); // pops[p][i] = rand.nextBoolean(); }
+		 * }
+		 */
 
 		double xPt = grid.get(0)[0];
 		int row = 1;
-		float constant = 0.00f;
+		float constant = 0.7f;
 		for (int p = 0; p < num_pop; p++) {
-
-			if (p <= 6) {
+			if (p < 0) {
 				for (int i = 0; i < grid.size(); i++) {
 					double nXPt = grid.get(i)[0];
 					if (xPt == nXPt) {
@@ -144,23 +223,23 @@ public class GA {
 						if (p % 2 == 0) { // Alternative layout
 							pops[p][i] = false; // default false
 							if (row % 2 == 0) {
-								if (rand.nextFloat() <= 0.95) { // col 1
+								if (rand.nextFloat() <= 0.90) { // col 1
 									pops[p][i] = true;
-								}else{
+								} else {
 									pops[p][i] = rand.nextBoolean();
 								}
-							} else if (rand.nextFloat() <= 0.10) { // col 2
-								pops[p][i] =rand.nextBoolean();
+							} else if (rand.nextFloat() <= 0.15) { // col 2
+								pops[p][i] = rand.nextBoolean();
 							}
 						} else { // alternative layout
 							pops[p][i] = false; // default false
 							if (row % 2 == 1) {
-								if (rand.nextFloat() <= 0.95) { // col 1
+								if (rand.nextFloat() <= 0.90) { // col 1
 									pops[p][i] = true;
-								}else{
+								} else {
 									pops[p][i] = rand.nextBoolean();
 								}
-							} else if (rand.nextFloat() <= 0.10) { // col 2
+							} else if (rand.nextFloat() <= 1) { // col 2
 								pops[p][i] = rand.nextBoolean();
 							}
 						}
@@ -169,10 +248,15 @@ public class GA {
 						row++;
 					}
 				}
-			} else {
-				constant += (0.9 / (num_pop-8));
+			} else if (p < 0) {
 				for (int i = 0; i < grid.size(); i++) {
-					if (rand.nextFloat() < constant) { // .40is good
+					// pops[p][i] = rand.nextBoolean();
+					populateEdges(p, i, .85);
+				}
+			} else {
+				constant += (.3 / (num_pop));
+				for (int i = 0; i < grid.size(); i++) {
+					if (rand.nextFloat() < 1) { // .40is good
 						pops[p][i] = true;
 					} else {
 						pops[p][i] = rand.nextBoolean();
@@ -181,11 +265,10 @@ public class GA {
 				}
 			}
 		}
-
 		evaluate(0);
 
 		// GA
-		for (int i = 0; i < (2000 / (num_pop - 5)); i++) { // 133
+		for (int i = 0; i < (2000 / (num_pop)); i++) { // 133
 
 			// rank populations (tournament)
 			int[] winners = new int[num_pop / 2];
@@ -233,7 +316,15 @@ public class GA {
 
 			boolean[][] children = null;
 			// children = co.twoPointCrossOver(num_pop, grid, winners, pops);
-			children = co.threeParentCrossOver(num_pop, grid, winners, pops);
+			if (i % 10 == 0) {
+				System.out.println("Uniform crossover");
+				children = co.uniformCrossOver(num_pop, grid, winners, pops);
+			} else {
+				System.out.println("Three Parents");
+				children = co.threeParentCrossOver(num_pop, grid, winners, pops);
+
+			}
+			// children = co.threeParentCrossOver(num_pop, grid, winners, pops);
 
 			// mutate
 			for (int c = 0; c < (num_pop - eliteCount); c++) {
@@ -273,8 +364,7 @@ public class GA {
 				&& rand.nextFloat() < probability) {
 			pops[p][i] = true;
 		} else {
-			if (rand.nextFloat() < 0.75)
-				pops[p][i] = rand.nextBoolean();
+			pops[p][i] = rand.nextBoolean();
 		}
 	}
 

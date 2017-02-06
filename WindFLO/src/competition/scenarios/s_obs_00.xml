@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <WindField><!--Wind scenario 0 from CMAES paper-->
-   <Angles>
+    <Angles>
       <angle c="7.0" k="2.0" omega="0.0002" theta="0"/>
       <angle c="5.0" k="2.0" omega="0.0080" theta="15"/>
       <angle c="5.0" k="2.0" omega="0.0227" theta="30"/>

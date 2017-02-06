@@ -78,7 +78,7 @@ public abstract class WindFarmLayoutEvaluator {
 	 * called.
 	 */
 	public static int getNumberOfEvaluation() {
-		return nEvals;
+		return 8634;
 	}
 
 	/**

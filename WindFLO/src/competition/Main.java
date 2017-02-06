@@ -8,7 +8,7 @@ public class Main {
 	// Change the following lines to fit your needs for the competition
 	private final String USER_API_TOKEN = "9HQBW1V8IXEPXBR19HKVPMO7PHQSLT"; // Place your User API Token here!
 	private final String RUN_API_TOKEN = "PEHIYHCYXDI22KT8UZDN5ZWKFSM7DO"; // Place your Run API Token here!
-	private final int SCENARIO_NUMBER = 0;
+	private final int SCENARIO_NUMBER = 3;
 	
 	public static void main(String argv[]) {
 		Main m = new Main();
@@ -35,7 +35,7 @@ public class Main {
 		
 		
 		for(int scenerio =0; scenerio <5 ; scenerio++){
-			for(int repeat =0; repeat<3;repeat++){
+			for(int repeat =0; repeat<1;repeat++){
 				
 				Out.createFile("local",scenerio);
 				WindScenario ws = null;
@@ -48,7 +48,7 @@ public class Main {
 				KusiakLayoutEvaluator wfle = new KusiakLayoutEvaluator();
 				wfle.initialize(ws);
 				GA algorithm = new GA(wfle);
-				algorithm.run();
+				algorithm.run1();
 		 }
 		 }
 		
