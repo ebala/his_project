@@ -9,7 +9,7 @@ import java.util.Date;
 
 public class Out {
 
-	private static String basePath = "D:/HIS/SEM3/HIS_Project/positions/";
+	private static String basePath = "D:/HIS/SEM3/HIS_Project/positions/test/";
 	private static String path = "";
 	private static String filePath = "";
 	private static String posFile = "";

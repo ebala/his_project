@@ -159,7 +159,7 @@ public class WindScenario {
 		URL fname = null;
 		String file="";
 		if (hasObstacles) {
-			file = "s_obs_0" + number + ".xml";
+			file = "obs_0" + number + ".xml";
 			fname = WindScenario.class.getResource(file);
 		} else {
 			file = "0" + number + ".xml";
