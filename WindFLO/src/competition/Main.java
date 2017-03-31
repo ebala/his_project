@@ -28,14 +28,18 @@ public class Main {
 			eval.initialize(SCENARIO_NUMBER, USER_API_TOKEN, RUN_API_TOKEN);
 		}		
 		GA algorithm = new GA(eval);
-		algorithm.run(8.001,8.001);
+		algorithm.algorithm1(8.001,8.001);
 	}
 
 	public void useLocalEvaluation() {
 		
 		
-		for(int scenerio =0; scenerio <2 ; scenerio++){
-			for(int repeat =0; repeat<1;repeat++){
+		for(int scenerio =2; scenerio <5 ; scenerio++){
+			for(int repeat =0; repeat<5;repeat++){
+				
+				// remove
+				if(scenerio==3)
+					continue;
 				
 				Out.createFile("local",scenerio);
 				WindScenario ws = null;
@@ -48,7 +52,8 @@ public class Main {
 				KusiakLayoutEvaluator wfle = new KusiakLayoutEvaluator();
 				wfle.initialize(ws);
 				GA algorithm = new GA(wfle);
-				algorithm.run(10.076,11.526);
+//				algorithm.algorithm2();
+				algorithm.algorithm1(8.001	 ,8.001);
 
 		 }
 		 }

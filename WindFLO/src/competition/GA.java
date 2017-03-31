@@ -21,10 +21,11 @@ public class GA {
 	private List<double[]> grid = new ArrayList<double[]>();
 
 	// Initial Values
-	private double distance =0.8;
-	private double xDist=0;
-	private double yDist =0;
-	
+	private double distance = 0.8;
+	private double xDist = 0;
+	private double yDist = 0;
+	private int whichLayoutType = 0;
+
 	SelectionMethods sms;
 	CrossOvers co;
 
@@ -38,6 +39,7 @@ public class GA {
 		cross_rate = 0.40;
 		sms = new SelectionMethods();
 		co = new CrossOvers();
+		whichLayoutType = 0;
 	}
 
 	private void evaluate(int iteration) {
@@ -106,36 +108,38 @@ public class GA {
 	/**
 	 * 
 	 */
-	public void run1(){
+	public void algorithm2() {
 		boolean doTest = true;
 		Map<String, Double> params = getOptimalLayout(8.001, 8.001, 12, 12, distance);
 		// perform test until we reach the 0.01 distance difference
-		while(doTest){
+		while (doTest) {
 			double x = 8.001;
-			if(params.get("xDist")>8.001)
-				x =params.get("xDist")-params.get("dist");
+			distance = params.get("dist") / 2;
+			if (params.get("xDist") > 8.001)
+				x = params.get("xDist") - params.get("dist");
 			double y = 8.001;
-			if(params.get("yDist") > 8.001)
-				y =params.get("yDist")-params.get("dist");
-			
-			double xM =params.get("xDist")+params.get("dist");
-			double yM =params.get("yDist")+params.get("dist");
-			distance = params.get("dist")/2;
+			if (params.get("yDist") > 8.001)
+				y = params.get("yDist") - params.get("dist");
+
+			double xM = params.get("xDist") + params.get("dist");
+			double yM = params.get("yDist") + params.get("dist");
+//			System.out.println("------------------------------------------>     "+xM + ";" + yM);
 			System.out.println("Distance ----------------------------------->   " + distance);
-			if(distance > 0.01){
+			if (distance > 0.01) {
 				params = getOptimalLayout(x, y, xM, yM, distance);
-			}else{
+			} else {
 				// break the loop.
 				doTest = false;
 				xDist = params.get("xDist");
 				yDist = params.get("yDist");
 			}
 		}
-		
+
 		grid = new ArrayList<double[]>();
-		run(xDist,yDist);
+//		**************************
+		algorithm1(xDist, yDist);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -143,19 +147,21 @@ public class GA {
 
 		Map<String, Double> layoutParams = new HashMap<>();
 		double fitness = Double.MAX_VALUE;
+		double[][] layout_print = null;
 
-		int count =1;
-		for (double xd = xStart ; xd < xMax ; xd = xd + dist) {
-			for (double yd = yStart ; yd < yMax ; yd = yd + dist) {
-				
+		int count = 1;
+		int tcount =0;
+		for (double xd = xStart; xd < xMax; xd = xd + dist) {
+			for (double yd = yStart; yd < yMax; yd = yd + dist) {
+
 				grid = new ArrayList<double[]>();
 				fits = new double[num_pop];
-				
-				double interval = xd* wfle.getTurbineRadius();
-				double h = yd* wfle.getTurbineRadius();
 
-				for (double x = 0.0; x < wfle.getFarmWidth(); x += interval) {
-					for (double y = 0.0; y < wfle.getFarmHeight(); y += h) {
+				double width = xd * wfle.getTurbineRadius();
+				double height = yd * wfle.getTurbineRadius();
+
+				for (double x = 0.0; x < wfle.getFarmWidth(); x += width) {
+					for (double y = 0.0; y < wfle.getFarmHeight(); y += height) {
 						boolean valid = true;
 						for (int o = 0; o < wfle.getObstacles().length; o++) {
 							double[] obs = wfle.getObstacles()[o];
@@ -170,61 +176,134 @@ public class GA {
 						}
 					}
 				}
-
+				
+				double coe = 0;
+				double coe1 = 0;
 				boolean[] pops = new boolean[grid.size()];
+				boolean[] pops1 = new boolean[grid.size()];
+				
+				if(whichLayoutType ==0 || whichLayoutType ==1){
+					// Enable all the turbines
+					boolean isOdd =true;
+					for (int i = 0; i < grid.size(); i++) {
+						double yPt = grid.get(i)[1];
+						if(yPt == 0.0){
+							isOdd = !isOdd;
+						}
+						
+						if(isOdd){
+							if(i%2==1){
+								pops[i] = true;
+							}
+						}else{
+							if(i%2==0){
+								pops[i] = true;
+							}	
+						}
+					}
+					
+					int turbines = 0;
+					for (int i = 0; i < grid.size(); i++) {
+						if (pops[i]) {
+							turbines++;
+						}
+					}
+					
+					tcount = turbines;
 
-				for (int i = 0; i < grid.size(); i++) {
-//					if(rand.nextFloat() < 0.5)
-						pops[i] = true;
+					double[][] layout = new double[turbines][2];
+					
+					int l_i = 0;
+					for (int i = 0; i < grid.size(); i++) {
+						if (pops[i]) {
+							layout[l_i][0] = grid.get(i)[0];
+							layout[l_i][1] = grid.get(i)[1];
+//							System.out.println(layout[l_i][0] + ";" + layout[l_i][1]);
+							l_i++;
+						}
+					}
+					
+					layout_print = layout;
+					if (wfle.checkConstraint(layout)) {
+						wfle.evaluate(layout);
+						coe = wfle.getEnergyCost();
+					}
 				}
-
-				double[][] layout = new double[pops.length][2];
-				int l_i = 0;
-				for (int i = 0; i < grid.size(); i++) {
-					if (pops[i]) {
-						layout[l_i][0] = grid.get(i)[0];
-						layout[l_i][1] = grid.get(i)[1];
-						l_i++;
+				if(whichLayoutType ==0 || whichLayoutType ==2){
+					
+					for (int i = 0; i < grid.size(); i++) {
+						pops1[i] = true;
+					}
+					
+					int turbines = 0;
+					for (int i = 0; i < grid.size(); i++) {
+						if (pops1[i]) {
+							turbines++;
+						}
+					}
+					
+					tcount = turbines;
+						
+					double[][] layout1 = new double[turbines][2];
+					int l_i = 0;
+					for (int i = 0; i < grid.size(); i++) {
+						if (pops1[i]) {
+							layout1[l_i][0] = grid.get(i)[0];
+							layout1[l_i][1] = grid.get(i)[1];
+							l_i++;
+						}
+					}
+					
+					layout_print = layout1; 
+					if (wfle.checkConstraint(layout1)) {
+						wfle.evaluate(layout1);
+						double c1 = wfle.getEnergyCost();
+						
+						if(whichLayoutType==0){
+							if(coe<c1){
+								whichLayoutType =1;
+							}else{
+								whichLayoutType = 2;
+							}
+						}
+						
+						coe =c1;
 					}
 				}
 
-				double coe = 0;
-				if (wfle.checkConstraint(layout)) {
-					// XXX: Following lines cost one evaluation in competition
-					// mode!
-					wfle.evaluate(layout);
-					coe = wfle.getEnergyCost();
-				}
-
-				System.out.println(count + " : x dist => " + xd + " | y dist => " + yd );
-				Out.writePos(count + " : x dist => " + xd + " | y dist => " + yd );
-				if(coe<fitness){
+				System.out.println(count + " | TCOUNT  => "+ tcount + "   |  x dist => " + xd + " | y dist => " + yd );
+				Out.writePos(count + " | TCOUNT  => "+ tcount + "   |  x dist => " + xd + " | y dist => " + yd );
+				if (coe < fitness) {
 					layoutParams.put("xDist", xd);
 					layoutParams.put("yDist", yd);
 					layoutParams.put("dist", dist);
-					
+
 					fitness = coe;
-					System.out.println(count + " : x dist => " + xd + " | y dist => " + yd + " | Fitness -> " + coe *10000);
-					Out.writePos("x dist => " + xd + " | y dist => " + yd + " | Fitness -> " + coe *10000);
+					
+					Out.createCSVFile("data.csv");
+					Out.writeCSVData(layout_print);
+					
+					System.out.println(count + " | TCOUNT  => "+ tcount + "   |  x dist => " + xd + " | y dist => " + yd + " | Fitness -> " + coe * 10000);
+					Out.writePos(count + " | TCOUNT  => "+ tcount + "   |  x dist => " + xd + " | y dist => " + yd + " | Fitness -> " + coe * 10000);
 				}
 				count++;
 			}
 		}
-		
+
 		return layoutParams;
 	}
 
 	/**
 	 * 
 	 */
-	public void run(double xD, double yD) {
+	public void algorithm1(double xD, double yD) {
 
-//		testhw();
+		// testhw();
 
 		// 0 => 8.205000000000004 | 9.40500000000002
 		// 1 => 8.055000000000001 | 9.255000000000019
 		// 2 => 8.451000000000006 | 9.651000000000023
-		// 3 => 9.200999999999995 | 8.001 
+		// 3 => 9.200999999999995 | 8.001
 		// 4 => 8.201000000000002 | 9.50100000000002
 		// set up grid
 		// centers must be > 8*R apart
@@ -263,7 +342,7 @@ public class GA {
 
 		double xPt = grid.get(0)[0];
 		int row = 1;
-		float constant = 0.5f;
+		float constant = 0.55f;
 		for (int p = 0; p < num_pop; p++) {
 			if (p < 6) {
 				for (int i = 0; i < grid.size(); i++) {
@@ -298,13 +377,36 @@ public class GA {
 						row++;
 					}
 				}
-			} else if (p < 12) {
+			} else if (p < 12) { //8***************
 				for (int i = 0; i < grid.size(); i++) {
 					// pops[p][i] = rand.nextBoolean();
 					populateEdges(p, i, .85);
 				}
-			} else {
-				constant += (.5 / (num_pop-12));
+			}
+			//**********************************
+			/* else if (p < 12) {
+				boolean isOdd = false;
+				if(p%2==0){
+					isOdd = true;
+				}
+				for (int i = 0; i < grid.size(); i++) {
+					double y = grid.get(i)[1];
+					if(y == 0.0){
+						isOdd = !isOdd;
+					}
+					pops[p][i] = false;
+					if(isOdd){
+						if(i%2==1){
+							pops[p][i] = true;
+						}
+					}else{
+						if(i%2==0){
+							pops[p][i] = true;
+						}	
+					}
+				}
+			}*/else {
+				constant += (.4 / (num_pop - 12));
 				for (int i = 0; i < grid.size(); i++) {
 					if (rand.nextFloat() < constant) { // .40is good
 						pops[p][i] = true;
@@ -318,7 +420,7 @@ public class GA {
 		evaluate(0);
 
 		// GA
-		for (int i = 0; i < (2000 / (50)); i++) { // 133
+		for (int i = 0; i < (2000 / (20)); i++) { // 133
 
 			// rank populations (tournament)
 			int[] winners = new int[num_pop / 2];
@@ -365,15 +467,15 @@ public class GA {
 			}
 
 			boolean[][] children = null;
-			// children = co.twoPointCrossOver(num_pop, grid, winners, pops);
-			if (i % 10 == 0) {
+			children = co.threeParentCrossOver(num_pop, grid, winners, pops);
+			/*if (i % 10 == 0) {
 				System.out.println("Uniform crossover");
 				children = co.uniformCrossOver(num_pop, grid, winners, pops);
 			} else {
 				System.out.println("Three Parents");
 				children = co.threeParentCrossOver(num_pop, grid, winners, pops);
 
-			}
+			}*/
 			// children = co.threeParentCrossOver(num_pop, grid, winners, pops);
 
 			// mutate
